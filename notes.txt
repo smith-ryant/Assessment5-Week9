@@ -1,0 +1,27 @@
+A "column undefined" error typically occurs when you're trying to interact with a column in a database that doesn't exist. This could happen for a few reasons:
+
+Typo in Column Name: You might have made a typo in the column name in your SQL query. Column names are case-sensitive in some databases, so ensure that the case matches exactly.
+
+Column Doesn't Exist: The column you're trying to interact with might not exist in the table. Check your database schema to ensure that the column exists.
+
+Table Doesn't Exist: The table you're trying to interact with might not exist. If the table doesn't exist, then none of its columns will exist either.
+
+In your createCity function, you're interacting with the name, rating, and country_id columns in the cities table. If you're getting a "column undefined" error in this function, it's likely that one of these columns doesn't exist in the cities table. Check your database schema to ensure that these columns exist.
+
+
+
+let { name, rating, country_name } = req.body;: This line is using destructuring assignment to extract name, rating, and country_name properties from req.body. req.body typically contains the data sent by the client in the body of the HTTP request.
+
+sequelize.query(SELECT country_id FROM countries WHERE name = '${country_name}'): This line is executing a SQL query to select the country_id from the countries table where the name matches the country_name provided in the request body. This is done to get the country_id associated with the provided country_name.
+
+.then((dbRes) => {...}): This is a Promise that gets resolved when the above SQL query is completed. The result of the query (i.e., the country_id) is passed to the callback function as dbRes.
+
+if (!dbRes[0][0]) {...}: This line checks if the query returned a result. If the country_name does not exist in the countries table, dbRes[0][0] will be undefined, and the function will send a 400 status code with an error message "Country not found".
+
+let country_id = dbRes[0][0].country_id;: If the country was found, this line extracts the country_id from the first record of the query result.
+
+return sequelize.query(...) : This line executes another SQL query to insert a new record into the cities table using the name, rating, and country_id obtained earlier.
+
+The second .then((dbRes) => {...}) is another Promise that gets resolved when the INSERT query is completed. If the insertion is successful, it sends a 200 status code along with the result of the query.
+
+.catch((err) => {...}): This is a catch block that handles any errors that might occur during the execution of the SQL queries. If an error occurs, it logs the error and sends a 500 status code with an error message "An error occurred while creating the city".
